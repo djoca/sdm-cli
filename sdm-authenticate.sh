@@ -22,7 +22,7 @@ RESPONSE=$(curl -s \
 ACCESS_KEY=$(echo $RESPONSE | sed "s/.*access_key>\([0-9]\+\).*/\1/g")
 
 if [ -n "$(echo $ACCESS_KEY | sed s/[0-9]*//g)" ]; then
-    echo "Authentication failure."
+    echo "Authentication failure." >&2
     exit 1
 fi
 

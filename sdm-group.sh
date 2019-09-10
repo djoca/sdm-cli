@@ -20,7 +20,7 @@ RESPONSE=$(curl -s \
 GROUP_ID=$(echo $RESPONSE | sed "s/[^']*'\([A-F0-9]\+\).*/\1/g")
 
 if [ -z "$GROUP_ID" ]; then
-    echo "Group not found."
+    echo "Group not found." >&2
     exit 1
 fi
 

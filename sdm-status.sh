@@ -20,7 +20,7 @@ RESPONSE=$(curl -s \
 STATUS_ID=$(echo $RESPONSE | sed "s/.*REL_ATTR=\"\([^\"]*\)\".*/\1/g")
 
 if [ -z "$STATUS_ID" ]; then
-    echo "Status not found."
+    echo "Status not found." >&2
     exit 1
 fi
 
