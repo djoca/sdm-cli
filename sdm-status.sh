@@ -1,8 +1,10 @@
 #!/bin/bash
 
 if [ -z "$1" ]; then
-   echo "Usage: sdm-status.sh <ACCESS_KEY> <STATUS_NAME>"
-   exit 0
+    echo "Usage: sdm-status.sh <ACCESS_KEY> <STATUS_NAME> [OPTIONS]"
+    echo -e "Options:"
+    echo -e "    -x\tPrint full result"
+    exit 1
 fi
 
 ACCESS_KEY=$1; shift
@@ -12,14 +14,14 @@ ARGS=$@
 COMMON_NAME=$(echo $STATUS_NAME | sed "s/ /%20/g")
 
 RESPONSE=$(curl -s \
-   -H "X-AccessKey: $ACCESS_KEY" \
-   "http://sjkap754:8050/caisd-rest/crs/COMMON_NAME-$COMMON_NAME")
+    -H "X-AccessKey: $ACCESS_KEY" \
+    "http://sjkap754:8050/caisd-rest/crs/COMMON_NAME-$COMMON_NAME")
 
 STATUS_ID=$(echo $RESPONSE | sed "s/.*REL_ATTR=\"\([^\"]*\)\".*/\1/g")
 
 if [ -z "$STATUS_ID" ]; then
-   echo "Status not found."
-   exit 1
+    echo "Status not found."
+    exit 1
 fi
 
 if [ "$ARGS" == "-x" ]; then

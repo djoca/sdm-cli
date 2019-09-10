@@ -1,8 +1,10 @@
 #!/bin/bash
 
 if [ -z "$1" ]; then
-   echo "Usage: sdm-group.sh <ACCESS_KEY> <GROUP_NAME>"
-   exit 0
+    echo "Usage: sdm-group.sh <ACCESS_KEY> <GROUP_NAME> [OPTIONS]"
+    echo -e "Options:"
+    echo -e "    -x\tPrint full result"
+    exit 1
 fi
 
 ACCESS_KEY=$1; shift
@@ -12,14 +14,14 @@ ARGS=$@
 COMMON_NAME=$(echo $GROUP_NAME | sed "s/ /%20/g")
 
 RESPONSE=$(curl -s \
-   -H "X-AccessKey: $ACCESS_KEY" \
-   "http://sjkap754:8050/caisd-rest/grp/COMMON_NAME-$COMMON_NAME")
+    -H "X-AccessKey: $ACCESS_KEY" \
+    "http://sjkap754:8050/caisd-rest/grp/COMMON_NAME-$COMMON_NAME")
 
 GROUP_ID=$(echo $RESPONSE | sed "s/[^']*'\([A-F0-9]\+\).*/\1/g")
 
 if [ -z "$GROUP_ID" ]; then
-   echo "Group not found."
-   exit 1
+    echo "Group not found."
+    exit 1
 fi
 
 if [ "$ARGS" == "-x" ]; then
