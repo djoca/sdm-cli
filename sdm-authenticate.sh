@@ -19,12 +19,14 @@ RESPONSE=$(curl -s \
    -d "<rest_access/>" \
    http://sjkap754:8050/caisd-rest/rest_access)
 
+ACCESS_KEY=$(echo $RESPONSE | sed "s/.*access_key>\([0-9]\+\).*/\1/g")
+
 if [ "$ARGS" == "-x" ]; then
     echo $RESPONSE
 else
-    echo $RESPONSE | sed "s/.*access_key>\([0-9]\+\).*/\1/g"
+    echo $ACCESS_KEY
 fi
 
-if [ -z "$(echo $RESPONSE | grep access_key)" ]; then
+if [ -z "$(echo $ACCESS_KEY | sed s/[0-9]*//g)" ]; then
    exit 1
 fi
