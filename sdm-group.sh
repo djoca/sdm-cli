@@ -17,14 +17,13 @@ RESPONSE=$(curl -s \
 
 GROUP_ID=$(echo $RESPONSE | sed "s/[^']*'\([A-F0-9]\+\).*/\1/g")
 
-if [ "$ARGS" == "-x" ]; then
-    echo $RESPONSE
-else
-    echo $GROUP_ID
-fi
-
 if [ -z "$GROUP_ID" ]; then
    echo "Group not found."
    exit 1
 fi
 
+if [ "$ARGS" == "-x" ]; then
+    echo $RESPONSE
+else
+    echo $GROUP_ID
+fi
