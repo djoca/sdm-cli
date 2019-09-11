@@ -59,14 +59,19 @@ TICKETS=$(curl -s \
     "http://sjkap754:8050/caisd-rest/in?start=1&size=$MAX_RESULTS&WC=group%3D'$GROUP_ID'$STATUS_QUERY")
 
 if [ -z "$FULL_RESULT" ]; then
+    TICKETS=$(echo -e "$TICKETS\n" | sed "s/<in/\n<in/g" | grep -vs "<?xml")
+    if [ -z "$TICKETS" ]; then
+        echo "No tickets found."
+        exit
+    fi
+
     IFS=$'\n'
-    TICKETS=$(echo $TICKETS | sed -E "s/<in/\n<in/g" | grep "<in" )
     echo -e "OPENED IN \t\t STATUS \t PRIORITY \t SUMMARY"
     for TICKET in $TICKETS; do
-        PRIORITY=$(echo $TICKET | sed "s/.*<priority.*COMMON_NAME=\"\([^\"]\+\).*<\/priority.*/\1/g"  )
-        STATUS=$(echo $TICKET | sed "s/.*<status.*COMMON_NAME=\"\([^\"]\+\).*<\/status.*/\1/g"  )
-        SUMMARY=$(echo $TICKET | sed "s/.*<summary>\([^<]\+\).*/\1/g"  )
-        OPEN_DATE=$(echo $TICKET | sed "s/.*<open_date>\([^<]\+\).*/\1/g"  )
+        PRIORITY=$(echo $TICKET | sed "s/.*<priority.*COMMON_NAME=\"\([^\"]\+\).*<\/priority.*/\1/g")
+        STATUS=$(echo $TICKET | sed "s/.*<status.*COMMON_NAME=\"\([^\"]\+\).*<\/status.*/\1/g")
+        SUMMARY=$(echo $TICKET | sed "s/.*<summary>\([^<]\+\).*/\1/g")
+        OPEN_DATE=$(echo $TICKET | sed "s/.*<open_date>\([^<]\+\).*/\1/g")
         OPEN_DATE=$(date --date="@$OPEN_DATE" "+%a %d/%m/%Y %H:%M")
         echo -e "$OPEN_DATE \t $STATUS \t $PRIORITY \t $SUMMARY"
     done
