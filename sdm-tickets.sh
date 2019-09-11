@@ -7,13 +7,13 @@ ATTRIBUTES="status, priority, summary, open_date"
 STATUS_NAME=Aberto
 
 if [ -z "$3" ]; then
-    echo "Usage: sdm-tickets.sh <USERNAME> <PASSWORD> <GROUP_NAME> [STATUS_NAME] [OPTIONS]"
-    echo -e "STATUS_NAME:"
-    echo -e "    The ticket status common name. Default value is $STATUS_NAME"
+    echo "Usage: sdm-tickets.sh <USERNAME> <PASSWORD> <GROUP_NAME> [OPTIONS]"
     echo -e "Options:"
     echo -e "    -x\tPrint full result"
     echo -e "    -a\tComma separated attribute names"
     echo -e "    \tDefault values are $ATTRIBUTES"
+    echo -e "    -s\tTicket status"
+    echo -e "    \tDefault value is $STATUS_NAME"
     exit 1
 fi
 
@@ -33,8 +33,14 @@ while [ -n "$1" ]; do
         shift
         continue
     fi
-    STATUS_NAME=$1
-    shift
+    if [ "$1" == "-s" ]; then
+        shift
+        STATUS_NAME=$1
+        shift
+        continue
+    fi
+    echo "Wrong arguments." >&2
+    exit 1
 done
 
 ACCESS_KEY=$(./sdm-authenticate.sh $USERNAME $PASSWORD)
