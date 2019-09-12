@@ -66,14 +66,14 @@ if [ -z "$FULL_RESULT" ]; then
     fi
 
     IFS=$'\n'
-    echo -e "OPENED IN \t\t STATUS \t PRIORITY \t SUMMARY"
+    printf "%-17s \t %-20s \t %-10s \t %s\n" "OPENED IN" "STATUS" "PRIORITY" "SUMMARY"
     for TICKET in $TICKETS; do
         PRIORITY=$(echo $TICKET | sed "s/.*<priority.*COMMON_NAME=\"\([^\"]\+\).*<\/priority.*/\1/g")
         STATUS=$(echo $TICKET | sed "s/.*<status.*COMMON_NAME=\"\([^\"]\+\).*<\/status.*/\1/g")
         SUMMARY=$(echo $TICKET | sed "s/.*<summary>\([^<]\+\).*/\1/g")
         OPEN_DATE=$(echo $TICKET | sed "s/.*<open_date>\([^<]\+\).*/\1/g")
-        OPEN_DATE=$(date --date="@$OPEN_DATE" "+%a %d/%m/%Y %H:%M")
-        echo -e "$OPEN_DATE \t $STATUS \t $PRIORITY \t $SUMMARY"
+        OPEN_DATE=$(date --date="@$OPEN_DATE" "+%d/%m/%Y %H:%M")
+        printf "%-17s \t %-20s \t %-10s \t %s\n" "$OPEN_DATE" "$STATUS" "$PRIORITY" "$SUMMARY"
     done
     unset IFS
 else
