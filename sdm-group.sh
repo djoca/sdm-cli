@@ -1,13 +1,15 @@
 #!/bin/bash
 
+set -e
+
 if [ -z "$1" ]; then
-    echo "Usage: sdm-group.sh <ACCESS_KEY> <GROUP_NAME> [OPTIONS]"
+    echo "Usage: sdm-group.sh <GROUP_NAME> [OPTIONS]"
     echo -e "Options:"
     echo -e "    -x\tPrint full result"
     exit 1
 fi
 
-ACCESS_KEY=$1; shift
+ACCESS_KEY=$(./sdm-authenticate.sh -r)
 GROUP_NAME=$(echo $1 | sed "s/ /%20/g"); shift
 ARGS=$@
 

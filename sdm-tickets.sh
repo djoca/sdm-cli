@@ -6,8 +6,8 @@ MAX_RESULTS=10
 ATTRIBUTES="status, priority, summary, open_date"
 STATUS_NAME=Aberto
 
-if [ -z "$3" ]; then
-    echo "Usage: sdm-tickets.sh <USERNAME> <PASSWORD> <GROUP_NAME> [OPTIONS]"
+if [ -z "$1" ]; then
+    echo "Usage: sdm-tickets.sh <GROUP_NAME> [OPTIONS]"
     echo -e "Options:"
     echo -e "    -x\tPrint full result"
     echo -e "    -a\tComma separated attribute names"
@@ -17,8 +17,6 @@ if [ -z "$3" ]; then
     exit 1
 fi
 
-USERNAME=$1; shift
-PASSWORD=$1; shift
 GROUP_NAME=$1; shift
 
 while [ -n "$1" ]; do
@@ -43,12 +41,12 @@ while [ -n "$1" ]; do
     exit 1
 done
 
-ACCESS_KEY=$(./sdm-authenticate.sh $USERNAME $PASSWORD)
+ACCESS_KEY=$(./sdm-authenticate.sh -r)
 
-GROUP_ID=$(./sdm-group.sh $ACCESS_KEY "$GROUP_NAME")
+GROUP_ID=$(./sdm-group.sh "$GROUP_NAME")
 
 if [ -n "$STATUS_NAME" ]; then
-    STATUS_ID=$(./sdm-status.sh $ACCESS_KEY "$STATUS_NAME")
+    STATUS_ID=$(./sdm-status.sh "$STATUS_NAME")
     STATUS_QUERY=" and status='$STATUS_ID'"
     STATUS_QUERY=$(echo $STATUS_QUERY | sed "s/ /%20/g" | sed "s/=/%3D/g")
 fi
