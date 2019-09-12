@@ -20,10 +20,10 @@ if [ "$1" == "-r" ]; then
     exit
 fi
 
-if (( $# < 2 )); then
+if (( $# < 1 )); then
     echo "Usage:"
-    echo -e "\tsdm-authenticate.sh -r"
-    echo -e "\tsdm-authenticate.sh <USERNAME> <PASSWORD> [OPTIONS]"
+    echo -e "     sdm-authenticate.sh <USERNAME> [-x]"
+    echo -e "     sdm-authenticate.sh -r"
     echo -e "Options:"
     echo -e "    -r\tRevalidate stored access key"
     echo -e "    -x\tPrint XML result"
@@ -31,7 +31,8 @@ if (( $# < 2 )); then
 fi
 
 USERNAME=$1; shift
-PASSWORD=$1; shift
+echo -n "Password for $USERNAME: "; read -s PASSWORD
+echo
 ARGS=$@
 
 TOKEN=$(echo "$USERNAME:$PASSWORD" | base64)
