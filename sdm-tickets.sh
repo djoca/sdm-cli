@@ -2,6 +2,8 @@
 
 set -e
 
+SDM_CLI_DIR=$( dirname $(realpath $0) )
+
 MAX_RESULTS=10
 ATTRIBUTES="status, priority, summary, open_date"
 STATUS_NAME=Aberto
@@ -49,12 +51,12 @@ while [ -n "$1" ]; do
     exit 1
 done
 
-ACCESS_KEY=$(./sdm-authenticate.sh -r)
+ACCESS_KEY=$($SDM_CLI_DIR/sdm-authenticate.sh -r)
 
-GROUP_ID=$(./sdm-group.sh "$GROUP_NAME")
+GROUP_ID=$($SDM_CLI_DIR/sdm-group.sh "$GROUP_NAME")
 
 if [ -n "$STATUS_NAME" ]; then
-    STATUS_ID=$(./sdm-status.sh "$STATUS_NAME")
+    STATUS_ID=$($SDM_CLI_DIR/sdm-status.sh "$STATUS_NAME")
     STATUS_QUERY=" and status='$STATUS_ID'"
     STATUS_QUERY=$(echo $STATUS_QUERY | sed "s/ /%20/g" | sed "s/=/%3D/g")
 fi

@@ -2,6 +2,8 @@
 
 set -e
 
+SDM_CLI_DIR=$( dirname $(realpath $0) )
+
 if [ -z "$1" ]; then
     echo "Usage: sdm-status.sh <STATUS_NAME> [OPTIONS]"
     echo -e "Options:"
@@ -9,7 +11,7 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-ACCESS_KEY=$(./sdm-authenticate.sh -r)
+ACCESS_KEY=$($SDM_CLI_DIR/sdm-authenticate.sh -r)
 STATUS_NAME=$(echo $1 | sed "s/ /%20/g"); shift
 ARGS=$@
 
