@@ -9,11 +9,13 @@ STATUS_NAME=Aberto
 if [ -z "$1" ]; then
     echo "Usage: sdm-tickets.sh <GROUP_NAME> [OPTIONS]"
     echo -e "Options:"
-    echo -e "    -x\tPrint full result"
-    echo -e "    -a\tComma separated attribute names"
+    echo -e "    -x\tPrint XML result"
+    echo -e "    -a\tComma separated attribute names (only works with -x option)"
     echo -e "    \tDefault values are $ATTRIBUTES"
     echo -e "    -s\tTicket status"
     echo -e "    \tDefault value is $STATUS_NAME"
+    echo -e "    -l\tMax result length"
+    echo -e "    \tDefault value is $MAX_RESULTS"
     exit 1
 fi
 
@@ -34,6 +36,12 @@ while [ -n "$1" ]; do
     if [ "$1" == "-s" ]; then
         shift
         STATUS_NAME=$1
+        shift
+        continue
+    fi
+    if [ "$1" == "-l" ]; then
+        shift
+        MAX_RESULTS=$1
         shift
         continue
     fi

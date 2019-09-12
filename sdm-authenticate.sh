@@ -26,7 +26,7 @@ if (( $# < 2 )); then
     echo -e "\tsdm-authenticate.sh <USERNAME> <PASSWORD> [OPTIONS]"
     echo -e "Options:"
     echo -e "    -r\tRevalidate stored access key"
-    echo -e "    -x\tPrint full result"
+    echo -e "    -x\tPrint XML result"
     exit 1
 fi
 

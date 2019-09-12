@@ -5,7 +5,7 @@ set -e
 if [ -z "$1" ]; then
     echo "Usage: sdm-group.sh <GROUP_NAME> [OPTIONS]"
     echo -e "Options:"
-    echo -e "    -x\tPrint full result"
+    echo -e "    -x\tPrint XML result"
     exit 1
 fi
 
