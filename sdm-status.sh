@@ -11,7 +11,7 @@ ACCESS_KEY=$1; shift
 STATUS_NAME=$(echo $1 | sed "s/ /%20/g"); shift
 ARGS=$@
 
-COMMON_NAME=$(echo $STATUS_NAME | sed "s/ /%20/g")
+COMMON_NAME=$(echo $STATUS_NAME | sed "s/ /%20/g" | sed "s/\//_/g")
 
 RESPONSE=$(curl -s \
     -H "X-AccessKey: $ACCESS_KEY" \
