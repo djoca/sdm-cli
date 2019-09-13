@@ -7,11 +7,13 @@ SDM_CLI_DIR=$( dirname $(realpath $0) )
 MAX_RESULTS=10
 ATTRIBUTES="status, priority, summary, open_date"
 STATUS_NAME=Aberto
+OUTPUT_MODE="TABLE"
 
 if [ -z "$1" ]; then
     echo "Usage: sdm-tickets.sh <GROUP_NAME> [OPTIONS]"
     echo -e "Options:"
     echo -e "    -x\tPrint XML result"
+    echo -e "    -n\tPrint ticket numbers only"
     echo -e "    -a\tComma separated attribute names (only works with -x option)"
     echo -e "    \tDefault values are $ATTRIBUTES"
     echo -e "    -s\tTicket status"
@@ -24,8 +26,13 @@ fi
 GROUP_NAME=$1; shift
 
 while [ -n "$1" ]; do
+    if [ "$1" == "-n" ]; then
+        OUTPUT_MODE="NUMBER"
+        shift
+        continue
+    fi
     if [ "$1" == "-x" ]; then
-        FULL_RESULT=1
+        OUTPUT_MODE="XML"
         shift
         continue
     fi
@@ -66,7 +73,7 @@ TICKETS=$(curl -s \
     -H "X-Obj-Attrs: $ATTRIBUTES" \
     "http://sjkap754:8050/caisd-rest/in?start=1&size=$MAX_RESULTS&WC=group%3D'$GROUP_ID'$STATUS_QUERY")
 
-if [ -z "$FULL_RESULT" ]; then
+if [ "$OUTPUT_MODE" == "TABLE" ]; then
     TICKETS=$(echo -e "$TICKETS\n" | sed "s/<in/\n<in/g" | grep -vs "<?xml")
     if [ -z "$TICKETS" ]; then
         echo "No tickets found."
@@ -85,6 +92,8 @@ if [ -z "$FULL_RESULT" ]; then
         printf "%-13s %-20s %-20s %-10s \t %s\n" "$TICKET_NUMBER" "$OPEN_DATE" "$STATUS" "$PRIORITY" "$SUMMARY"
     done
     unset IFS
+elif [ "$OUTPUT_MODE" == "NUMBER" ]; then
+    echo -e "$TICKETS" | sed -r "s/<in/\r\n<in/g" | grep -vs "<?xml" | sed -r "s/<in[^>]*COMMON_NAME=\"([^\"]*).*/\1/g"
 else
     echo $TICKETS | tidy -xml -qi --wrap 0
 fi
