@@ -11,6 +11,7 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+SDM_HOST=$($SDM_CLI_DIR/sdm-config.sh -g)
 ACCESS_KEY=$($SDM_CLI_DIR/sdm-authenticate.sh -r)
 GROUP_NAME=$1; shift
 ARGS=$@
@@ -19,7 +20,7 @@ COMMON_NAME=$(echo $GROUP_NAME | sed "s/ /%20/g")
 
 RESPONSE=$(curl -s \
     -H "X-AccessKey: $ACCESS_KEY" \
-    "http://sjkap754:8050/caisd-rest/grp/COMMON_NAME-$COMMON_NAME")
+    "$SDM_HOST/caisd-rest/grp/COMMON_NAME-$COMMON_NAME")
 
 GROUP_ID=$(echo $RESPONSE | sed "s/[^']*'\([A-F0-9]\+\).*/\1/g")
 

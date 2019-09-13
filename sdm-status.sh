@@ -11,6 +11,7 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+SDM_HOST=$($SDM_CLI_DIR/sdm-config.sh -g)
 ACCESS_KEY=$($SDM_CLI_DIR/sdm-authenticate.sh -r)
 STATUS_NAME=$(echo $1 | sed "s/ /%20/g"); shift
 ARGS=$@
@@ -19,7 +20,7 @@ COMMON_NAME=$(echo $STATUS_NAME | sed "s/ /%20/g" | sed "s/\//_/g")
 
 RESPONSE=$(curl -s \
     -H "X-AccessKey: $ACCESS_KEY" \
-    "http://sjkap754:8050/caisd-rest/crs/COMMON_NAME-$COMMON_NAME")
+    "$SDM_HOST/caisd-rest/crs/COMMON_NAME-$COMMON_NAME")
 
 STATUS_ID=$(echo $RESPONSE | sed "s/.*REL_ATTR=\"\([^\"]*\)\".*/\1/g")
 

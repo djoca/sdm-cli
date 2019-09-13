@@ -58,6 +58,7 @@ while [ -n "$1" ]; do
     exit 1
 done
 
+SDM_HOST=$($SDM_CLI_DIR/sdm-config.sh -g)
 ACCESS_KEY=$($SDM_CLI_DIR/sdm-authenticate.sh -r)
 
 GROUP_ID=$($SDM_CLI_DIR/sdm-group.sh "$GROUP_NAME")
@@ -71,7 +72,7 @@ fi
 TICKETS=$(curl -s \
     -H "X-AccessKey: $ACCESS_KEY" \
     -H "X-Obj-Attrs: $ATTRIBUTES" \
-    "http://sjkap754:8050/caisd-rest/in?start=1&size=$MAX_RESULTS&WC=group%3D'$GROUP_ID'$STATUS_QUERY")
+    "$SDM_HOST/caisd-rest/in?start=1&size=$MAX_RESULTS&WC=group%3D'$GROUP_ID'$STATUS_QUERY")
 
 if [ "$OUTPUT_MODE" == "TABLE" ]; then
     TICKETS=$(echo -e "$TICKETS\n" | sed "s/<in/\n<in/g" | grep -vs "<?xml")
