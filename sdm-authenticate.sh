@@ -59,7 +59,7 @@ echo "access_key: $ACCESS_KEY" > $AUTH_FILE
 echo "expiration_date: $EXPIRATION_DATE" >> $AUTH_FILE
 
 if [ "$ARGS" == "-x" ]; then
-    echo $RESPONSE
+    echo $RESPONSE | tidy -xml -qi -wrap 0
 else
     echo $ACCESS_KEY
 fi

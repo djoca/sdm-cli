@@ -30,7 +30,7 @@ if [ -z "$STATUS_ID" ]; then
 fi
 
 if [ "$ARGS" == "-x" ]; then
-    echo $RESPONSE
+    echo $RESPONSE | tidy -xml -qi -wrap 0
 else
     echo $STATUS_ID
 fi
