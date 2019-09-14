@@ -72,10 +72,10 @@ fi
 TICKETS=$(curl -s \
     -H "X-AccessKey: $ACCESS_KEY" \
     -H "X-Obj-Attrs: $ATTRIBUTES" \
-    "$SDM_HOST/caisd-rest/in?start=1&size=$MAX_RESULTS&WC=group%3D'$GROUP_ID'$STATUS_QUERY")
+    "$SDM_HOST/caisd-rest/cr?start=1&size=$MAX_RESULTS&WC=group%3D'$GROUP_ID'$STATUS_QUERY")
 
 if [ "$OUTPUT_MODE" == "TABLE" ]; then
-    TICKETS=$(echo -e "$TICKETS\n" | sed "s/<in/\n<in/g" | grep -vs "<?xml")
+    TICKETS=$(echo -e "$TICKETS\n" | sed "s/<cr/\n<cr/g" | grep -vs "<?xml")
     if [ -z "$TICKETS" ]; then
         echo "No tickets found."
         exit
@@ -84,7 +84,7 @@ if [ "$OUTPUT_MODE" == "TABLE" ]; then
     IFS=$'\n'
     printf "%-13s %-20s %-20s %-10s \t %s\n" "ID" "OPENED IN" "STATUS" "PRIORITY" "SUMMARY"
     for TICKET in $TICKETS; do
-        TICKET_NUMBER=$(echo $TICKET | sed -r "s/<in[^>]+COMMON_NAME=\"([^\"]+).*/\1/g")
+        TICKET_NUMBER=$(echo $TICKET | sed -r "s/<cr[^>]+COMMON_NAME=\"([^\"]+).*/\1/g")
         PRIORITY=$(echo $TICKET | sed -r "s/.*<priority[^>]+COMMON_NAME=\"([^\"]+).*/\1/g")
         STATUS=$(echo $TICKET | sed -r "s/.*<status[^>]+COMMON_NAME=\"([^\"]+).*/\1/g")
         SUMMARY=$(echo $TICKET | sed -r "s/.*<summary>([^<]+).*/\1/g")
@@ -94,7 +94,7 @@ if [ "$OUTPUT_MODE" == "TABLE" ]; then
     done
     unset IFS
 elif [ "$OUTPUT_MODE" == "NUMBER" ]; then
-    echo -e "$TICKETS" | sed -r "s/<in/\r\n<in/g" | grep -vs "<?xml" | sed -r "s/<in[^>]*COMMON_NAME=\"([^\"]*).*/\1/g"
+    echo -e "$TICKETS" | sed -r "s/<cr/\r\n<cr/g" | grep -vs "<?xml" | sed -r "s/<cr[^>]*COMMON_NAME=\"([^\"]*).*/\1/g"
 else
     echo $TICKETS | tidy -xml -qi --wrap 0
 fi
