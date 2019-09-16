@@ -11,15 +11,15 @@ OUTPUT_MODE="TABLE"
 if [ -z "$1" ]; then
     echo "Usage: sdm-tickets.sh [OPTIONS]"
     echo -e "Options:"
-    echo -e "    -g <GROUP>\tGroup name"
-    echo -e "    -x\t\tPrint XML result"
-    echo -e "    -n\t\tPrint ticket numbers only"
-    echo -e "    -a <LIST>\tComma separated attribute names (only works with -x option)"
-    echo -e "    \t\tDefault values are $ATTRIBUTES"
-    echo -e "    -s <STATUS>\tTicket status name"
-    echo -e "    \t\tIf not defined, all active tickets will be returned"
-    echo -e "    -l <LENGTH>\tMax result length"
-    echo -e "    \t\tDefault value is $MAX_RESULTS"
+    echo -e "    -a, --attr-list <LIST>\tComma separated attribute names (only works with -x option)"
+    echo -e "    \t\t\t\tDefault values are $ATTRIBUTES"
+    echo -e "    -g, --group <GROUP>\t\tGroup name"
+    echo -e "    -l <LENGTH>\t\t\tMax result length"
+    echo -e "    \t\t\t\tDefault value is $MAX_RESULTS"
+    echo -e "    -n\t\t\t\tPrint ticket numbers only"
+    echo -e "    -s, --status <STATUS>\tTicket status name"
+    echo -e "    \t\t\t\tIf not defined, all active tickets will be returned"
+    echo -e "    -x, --xml\t\t\tPrint XML result"
     exit 1
 fi
 
@@ -29,24 +29,24 @@ while [ -n "$1" ]; do
         shift
         continue
     fi
-    if [ "$1" == "-x" ]; then
+    if [ "$1" == "-x" ] || [ "$1" == "--xml" ]; then
         OUTPUT_MODE="XML"
         shift
         continue
     fi
-    if [ "$1" == "-g" ]; then
+    if [ "$1" == "-g" ] || [ "$1" == "--group" ]; then
         shift
         GROUP_NAME=$1
         shift
         continue
     fi
-    if [ "$1" == "-a" ]; then
+    if [ "$1" == "-a" ] || [ "$1" == "--attr-list" ]; then
         shift
         ATTRIBUTES=$(echo $1 | sed s/^all$/\*/g)
         shift
         continue
     fi
-    if [ "$1" == "-s" ]; then
+    if [ "$1" == "-s" ] || [ "$1" == "--status" ]; then
         shift
         STATUS_NAME=$1
         shift
