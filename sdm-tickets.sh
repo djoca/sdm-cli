@@ -6,7 +6,6 @@ SDM_CLI_DIR=$( dirname $(realpath $0) )
 
 MAX_RESULTS=10
 ATTRIBUTES="status, priority, summary, open_date"
-STATUS_NAME=Aberto
 OUTPUT_MODE="TABLE"
 
 if [ -z "$1" ]; then
@@ -16,8 +15,8 @@ if [ -z "$1" ]; then
     echo -e "    -n\tPrint ticket numbers only"
     echo -e "    -a\tComma separated attribute names (only works with -x option)"
     echo -e "    \tDefault values are $ATTRIBUTES"
-    echo -e "    -s\tTicket status"
-    echo -e "    \tDefault value is $STATUS_NAME"
+    echo -e "    -s\tTicket status name"
+    echo -e "    \tIf not defined, all active tickets will be returned"
     echo -e "    -l\tMax result length"
     echo -e "    \tDefault value is $MAX_RESULTS"
     exit 1
@@ -66,8 +65,10 @@ GROUP_ID=$($SDM_CLI_DIR/sdm-group.sh "$GROUP_NAME")
 if [ -n "$STATUS_NAME" ]; then
     STATUS_ID=$($SDM_CLI_DIR/sdm-status.sh "$STATUS_NAME")
     STATUS_QUERY=" and status='$STATUS_ID'"
-    STATUS_QUERY=$(echo $STATUS_QUERY | sed "s/ /%20/g" | sed "s/=/%3D/g")
+else
+    STATUS_QUERY=" and active=1"
 fi
+STATUS_QUERY=$(echo $STATUS_QUERY | sed "s/ /%20/g" | sed "s/=/%3D/g")
 
 TICKETS=$(curl -s \
     -H "X-AccessKey: $ACCESS_KEY" \
