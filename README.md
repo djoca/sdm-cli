@@ -58,19 +58,27 @@ This script is used internally by sdm-tickets.sh and it's not very useful alone.
 
 ``./sdm-status.sh <STATUS_NAME>``
 
-### sdm-tickets.sh
-Retrieves the tickets of a group. 
-By default, all the open tickets are retrieved, limited by the max results parameter. You can change the default values with the command arguments.
+### sdm-contact.sh
+Retrieves a contact internal ID.
+This script is used internally by sdm-tickets.sh and it's not very useful alone.
 
-``./sdm-tickets.sh <STATUS_NAME> [OPTIONS]``
+``./sdm-contact.sh <CONTACT_NAME>``
+
+### sdm-tickets.sh
+Retrieves a list of tickets.
+By default, all the active tickets are retrieved, limited by the max results parameter. You can change the default values with the command arguments.
+
+``./sdm-tickets.sh [OPTIONS]``
 
 The supported arguments are:
 
 |Argument|Description|
 |--|--|
-| -x | Print raw XML result |
-| -a | Comma separated attribute names (only works with -x option) |
-| -n | Print ticket numbers only |
-| -s | Ticket status name |
+| -a, --attr-list | Comma separated attribute names (only works with -x option) |
+| --assignee | Tickets assigned to a contact |
+| -g, --group | Group name |
 | -l | Max result length |
-
+| -n | Print ticket numbers only |
+| -o, --opened-by | Tickets opened by a contact |
+| -s, --status | Ticket status name |
+| -x, --xml | Print raw XML result |
