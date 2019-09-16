@@ -13,6 +13,7 @@ if [ -z "$1" ]; then
     echo -e "Options:"
     echo -e "    -a, --attr-list <LIST>\tComma separated attribute names (only works with -x option)"
     echo -e "    \t\t\t\tDefault values are $ATTRIBUTES"
+    echo -e "        --assignee <CONTACT>\tTickets assigned to a contact"
     echo -e "    -g, --group <GROUP>\t\tGroup name"
     echo -e "    -l <LENGTH>\t\t\tMax result length"
     echo -e "    \t\t\t\tDefault value is $MAX_RESULTS"
@@ -37,6 +38,12 @@ while [ -n "$1" ]; do
     if [ "$1" == "-g" ] || [ "$1" == "--group" ]; then
         shift
         GROUP_NAME=$1
+        shift
+        continue
+    fi
+    if [ "$1" == "--assignee" ]; then
+        shift
+        ASSIGNEE_NAME=$1
         shift
         continue
     fi
@@ -75,6 +82,11 @@ fi
 if [ -n "$GROUP_NAME" ]; then
     GROUP_ID=$($SDM_CLI_DIR/sdm-group.sh "$GROUP_NAME")
     QUERY="$QUERY and group='$GROUP_ID'"
+fi
+
+if [ -n "$ASSIGNEE_NAME" ]; then
+    ASSIGNEE_ID=$($SDM_CLI_DIR/sdm-contact.sh "$ASSIGNEE_NAME")
+    QUERY="$QUERY and assignee='$ASSIGNEE_ID'"
 fi
 
 QUERY=$(echo $QUERY | sed "s/ /%20/g" | sed "s/=/%3D/g")
