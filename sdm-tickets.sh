@@ -9,8 +9,9 @@ ATTRIBUTES="status, priority, summary, open_date"
 OUTPUT_MODE="TABLE"
 
 if [ -z "$1" ]; then
-    echo "Usage: sdm-tickets.sh <GROUP_NAME> [OPTIONS]"
+    echo "Usage: sdm-tickets.sh [OPTIONS]"
     echo -e "Options:"
+    echo -e "    -g\tGroup name"
     echo -e "    -x\tPrint XML result"
     echo -e "    -n\tPrint ticket numbers only"
     echo -e "    -a\tComma separated attribute names (only works with -x option)"
@@ -22,8 +23,6 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-GROUP_NAME=$1; shift
-
 while [ -n "$1" ]; do
     if [ "$1" == "-n" ]; then
         OUTPUT_MODE="NUMBER"
@@ -32,6 +31,12 @@ while [ -n "$1" ]; do
     fi
     if [ "$1" == "-x" ]; then
         OUTPUT_MODE="XML"
+        shift
+        continue
+    fi
+    if [ "$1" == "-g" ]; then
+        shift
+        GROUP_NAME=$1
         shift
         continue
     fi
@@ -60,20 +65,24 @@ done
 SDM_HOST=$($SDM_CLI_DIR/sdm-config.sh -g)
 ACCESS_KEY=$($SDM_CLI_DIR/sdm-authenticate.sh -r)
 
-GROUP_ID=$($SDM_CLI_DIR/sdm-group.sh "$GROUP_NAME")
-
 if [ -n "$STATUS_NAME" ]; then
     STATUS_ID=$($SDM_CLI_DIR/sdm-status.sh "$STATUS_NAME")
-    STATUS_QUERY=" and status='$STATUS_ID'"
+    QUERY="status='$STATUS_ID'"
 else
-    STATUS_QUERY=" and active=1"
+    QUERY="active=1"
 fi
-STATUS_QUERY=$(echo $STATUS_QUERY | sed "s/ /%20/g" | sed "s/=/%3D/g")
+
+if [ -n "$GROUP_NAME" ]; then
+    GROUP_ID=$($SDM_CLI_DIR/sdm-group.sh "$GROUP_NAME")
+    QUERY="$QUERY and group='$GROUP_ID'"
+fi
+
+QUERY=$(echo $QUERY | sed "s/ /%20/g" | sed "s/=/%3D/g")
 
 TICKETS=$(curl -s \
     -H "X-AccessKey: $ACCESS_KEY" \
     -H "X-Obj-Attrs: $ATTRIBUTES" \
-    "$SDM_HOST/caisd-rest/cr?start=1&size=$MAX_RESULTS&WC=group%3D'$GROUP_ID'$STATUS_QUERY")
+    "$SDM_HOST/caisd-rest/cr?start=1&size=$MAX_RESULTS&WC=$QUERY")
 
 if [ "$OUTPUT_MODE" == "TABLE" ]; then
     TICKETS=$(echo -e "$TICKETS\n" | sed "s/<cr/\n<cr/g" | grep -vs "<?xml")
