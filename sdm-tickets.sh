@@ -8,7 +8,7 @@ MAX_RESULTS=10
 ATTRIBUTES="status, priority, summary, open_date"
 OUTPUT_MODE="TABLE"
 
-if [ -z "$1" ]; then
+if [ "$1" == "--help" ]; then
     echo "Usage: sdm-tickets.sh [OPTIONS]"
     echo -e "Options:"
     echo -e "    -a, --attr-list <LIST>\tComma separated attribute names (only works with -x option)"
@@ -18,11 +18,11 @@ if [ -z "$1" ]; then
     echo -e "    -l <LENGTH>\t\t\tMax result length"
     echo -e "    \t\t\t\tDefault value is $MAX_RESULTS"
     echo -e "    -n\t\t\t\tPrint ticket numbers only"
-    echo -e "    -r, --opened-by <CONTACT>\tTickets opened by a contact"
+    echo -e "    -o, --opened-by <CONTACT>\tTickets opened by a contact"
     echo -e "    -s, --status <STATUS>\tTicket status name"
     echo -e "    \t\t\t\tIf not defined, all active tickets will be returned"
     echo -e "    -x, --xml\t\t\tPrint XML result"
-    exit 1
+    exit
 fi
 
 while [ -n "$1" ]; do
@@ -121,7 +121,7 @@ if [ "$OUTPUT_MODE" == "TABLE" ]; then
         TICKET_NUMBER=$(echo $TICKET | sed -r "s/<cr[^>]+COMMON_NAME=\"([^\"]+).*/\1/g")
         PRIORITY=$(echo $TICKET | sed -r "s/.*<priority[^>]+COMMON_NAME=\"([^\"]+).*/\1/g")
         STATUS=$(echo $TICKET | sed -r "s/.*<status[^>]+COMMON_NAME=\"([^\"]+).*/\1/g")
-        SUMMARY=$(echo $TICKET | sed -r "s/.*<summary>([^<]+).*/\1/g")
+        SUMMARY=$(echo $TICKET | grep summary | sed -r "s/.*<summary>([^<]+).*/\1/g")
         OPEN_DATE=$(echo $TICKET | sed -r "s/.*<open_date>([^<]+).*/\1/g")
         OPEN_DATE=$(date --date="@$OPEN_DATE" "+%d/%m/%Y %H:%M")
         printf "%-13s %-20s %-20s %-10s \t %s\n" "$TICKET_NUMBER" "$OPEN_DATE" "$STATUS" "$PRIORITY" "$SUMMARY"
