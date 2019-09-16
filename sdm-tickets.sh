@@ -18,6 +18,7 @@ if [ -z "$1" ]; then
     echo -e "    -l <LENGTH>\t\t\tMax result length"
     echo -e "    \t\t\t\tDefault value is $MAX_RESULTS"
     echo -e "    -n\t\t\t\tPrint ticket numbers only"
+    echo -e "    -r, --opened-by <CONTACT>\tTickets opened by a contact"
     echo -e "    -s, --status <STATUS>\tTicket status name"
     echo -e "    \t\t\t\tIf not defined, all active tickets will be returned"
     echo -e "    -x, --xml\t\t\tPrint XML result"
@@ -38,6 +39,12 @@ while [ -n "$1" ]; do
     if [ "$1" == "-g" ] || [ "$1" == "--group" ]; then
         shift
         GROUP_NAME=$1
+        shift
+        continue
+    fi
+    if [ "$1" == "-o" ] || [ "$1" == "--opened-by" ]; then
+        shift
+        OPENED_BY_NAME=$1
         shift
         continue
     fi
@@ -82,6 +89,11 @@ fi
 if [ -n "$GROUP_NAME" ]; then
     GROUP_ID=$($SDM_CLI_DIR/sdm-group.sh "$GROUP_NAME")
     QUERY="$QUERY and group='$GROUP_ID'"
+fi
+
+if [ -n "$OPENED_BY_NAME" ]; then
+    OPENED_BY_ID=$($SDM_CLI_DIR/sdm-contact.sh "$OPENED_BY_NAME")
+    QUERY="$QUERY and requested_by='$OPENED_BY_ID'"
 fi
 
 if [ -n "$ASSIGNEE_NAME" ]; then
