@@ -1,4 +1,5 @@
 
+
 # SDM CLI
 
 The SDM CLI is a command line interface for the CA Service Desk Management Rest API.
@@ -82,3 +83,17 @@ The supported arguments are:
 | -o, --opened-by | Tickets opened by a contact |
 | -s, --status | Ticket status name |
 | -x, --xml | Print raw XML result |
+
+## Cron notifications
+
+A useful use of sdm-cli is to periodically check and notify open tickets. You can schedule sdm-cli executions using cron.
+
+The following cron expression retrieves tickets of "YOUR GROUP NAME" group with "YOUR STATUS NAME" status every 1 minute and, if any, send the ticket numbers by e-mail:
+
+``*/1 * * * * TICKETS=$(sdm-tickets.sh -g "YOUR GROUP NAME" -s "YOUR STATUS NAME" -n 2>&1); [ -n "$TICKETS" ] && echo "Open tickets: $TICKETS" | mail "email@domain"``
+
+The following cron expression does the same, but ticket numbers are displayed by a desktop notification:
+
+``*/1 * * * * TICKETS=$(sdm-tickets.sh -g "YOUR GROUP NAME" -s "YOUR GROUP STATUS" -n 2>&1); [ -n "$TICKETS" ] && (eval "export $(egrep -z DBUS_SESSION_BUS_ADDRESS /proc/$(pgrep -u $LOGNAME gnome-session)/environ | tr -d '\0')"; notify-send "SDM-CLI" "Open tickets: $TICKETS")``
+
+> __Important:__ Remember to include the sdm-cli installation directory in the PATH environment variable used by cron or use the full path in your cron expressions.
