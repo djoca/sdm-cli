@@ -11,17 +11,19 @@ OUTPUT_MODE="TABLE"
 if [ "$1" == "--help" ]; then
     echo "Usage: sdm-tickets.sh [OPTIONS]"
     echo -e "Options:"
-    echo -e "    -a, --attr-list <LIST>\tComma separated attribute names (only works with -x option)"
-    echo -e "    \t\t\t\tDefault values are $ATTRIBUTES"
-    echo -e "        --assignee <CONTACT>\tTickets assigned to a contact"
-    echo -e "    -g, --group <GROUP>\t\tGroup name"
-    echo -e "    -l <LENGTH>\t\t\tMax result length"
-    echo -e "    \t\t\t\tDefault value is $MAX_RESULTS"
-    echo -e "    -n\t\t\t\tPrint ticket numbers only"
-    echo -e "    -o, --opened-by <CONTACT>\tTickets opened by a contact"
-    echo -e "    -s, --status <STATUS>\tTicket status name"
-    echo -e "    \t\t\t\tIf not defined, all active tickets will be returned"
-    echo -e "    -x, --xml\t\t\tPrint XML result"
+    echo -e "    -a, --attr-list <LIST>\t\tComma separated attribute names (only works with -x option)"
+    echo -e "    \t\t\t\t\tDefault values are $ATTRIBUTES"
+    echo -e "        --assignee <CONTACT>\t\tTickets assigned to a contact"
+    echo -e "    -g, --group <GROUP>\t\t\tGroup name"
+    echo -e "    -l <LENGTH>\t\t\t\tMax result length"
+    echo -e "    \t\t\t\t\tDefault value is $MAX_RESULTS"
+    echo -e "    -n\t\t\t\t\tPrint ticket numbers only"
+    echo -e "    -o, --opened-by <CONTACT>\t\tTickets opened by a contact"
+    echo -e "    -r, --requested-by <CONTACT>\tTickets requested by a contact"
+    echo -e "    -c, --customer <CONTACT>\t\tTickets affecting a contact"
+    echo -e "    -s, --status <STATUS>\t\tTicket status name"
+    echo -e "    \t\t\t\t\tIf not defined, all active tickets will be returned"
+    echo -e "    -x, --xml\t\t\t\tPrint XML result"
     exit
 fi
 
@@ -45,6 +47,18 @@ while [ -n "$1" ]; do
     if [ "$1" == "-o" ] || [ "$1" == "--opened-by" ]; then
         shift
         OPENED_BY_NAME=$1
+        shift
+        continue
+    fi
+    if [ "$1" == "-r" ] || [ "$1" == "--requested-by" ]; then
+        shift
+        REQUESTED_BY_NAME=$1
+        shift
+        continue
+    fi
+    if [ "$1" == "-c" ] || [ "$1" == "--customer" ]; then
+        shift
+        CUSTOMER_NAME=$1
         shift
         continue
     fi
@@ -93,7 +107,17 @@ fi
 
 if [ -n "$OPENED_BY_NAME" ]; then
     OPENED_BY_ID=$($SDM_CLI_DIR/sdm-contact.sh "$OPENED_BY_NAME")
-    QUERY="$QUERY and requested_by='$OPENED_BY_ID'"
+    QUERY="$QUERY and log_agent='$OPENED_BY_ID'"
+fi
+
+if [ -n "$REQUESTED_BY_NAME" ]; then
+    REQUESTED_BY_ID=$($SDM_CLI_DIR/sdm-contact.sh "$REQUESTED_BY_NAME")
+    QUERY="$QUERY and requested_by='$REQUESTED_BY_ID'"
+fi
+
+if [ -n "$CUSTOMER_NAME" ]; then
+    CUSTOMER_ID=$($SDM_CLI_DIR/sdm-contact.sh "$CUSTOMER_NAME")
+    QUERY="$QUERY and customer='$CUSTOMER_ID'"
 fi
 
 if [ -n "$ASSIGNEE_NAME" ]; then

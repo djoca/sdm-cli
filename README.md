@@ -81,6 +81,8 @@ The supported arguments are:
 | -l | Max result length |
 | -n | Print ticket numbers only |
 | -o, --opened-by | Tickets opened by a contact |
+| -r, --requested-by | Tickets requested by a contact |
+| -c, --customer | Tickets affecting a contact |
 | -s, --status | Ticket status name |
 | -x, --xml | Print raw XML result |
 
