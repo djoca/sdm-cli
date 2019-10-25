@@ -23,6 +23,8 @@ if (( $# == 0 )) || [ "$1" == "--help" ]; then
     echo -e "    -c, --customer <CONTACT>\t\tTickets affecting a contact"
     echo -e "    -s, --status <STATUS>\t\tTicket status name"
     echo -e "    \t\t\t\t\tIf not defined, all active tickets will be returned"
+    echo -e "        --from-date <DATE>\t\tTickets opened after a specific date"
+    echo -e "    \t\t\t\t\tSee 'man date' for accepted formats"
     echo -e "    -x, --xml\t\t\t\tPrint XML result"
     exit
 fi
@@ -68,6 +70,12 @@ while [ -n "$1" ]; do
         shift
         continue
     fi
+    if [ "$1" == "--from-date" ]; then
+        shift
+        FROM_DATE=$1
+        shift
+        continue
+    fi
     if [ "$1" == "-a" ] || [ "$1" == "--attr-list" ]; then
         shift
         ATTRIBUTES=$(echo $1 | sed s/^all$/\*/g)
@@ -98,6 +106,11 @@ if [ -n "$STATUS_NAME" ]; then
     QUERY="status='$STATUS_ID'"
 else
     QUERY="active=1"
+fi
+
+if [ -n "$FROM_DATE" ]; then
+    FROM_DATE_SECONDS=$(date --date="$FROM_DATE" "+%s")
+    QUERY="$QUERY and open_date>='$FROM_DATE_SECONDS'"
 fi
 
 if [ -n "$GROUP_NAME" ]; then

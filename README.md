@@ -84,6 +84,7 @@ The supported arguments are:
 | -r, --requested-by | Tickets requested by a contact |
 | -c, --customer | Tickets affecting a contact |
 | -s, --status | Ticket status name |
+| --from-date | Tickets opened after a specific date |
 | -x, --xml | Print raw XML result |
 
 ## Cron notifications
