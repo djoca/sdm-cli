@@ -8,7 +8,7 @@ MAX_RESULTS=10
 ATTRIBUTES="status, priority, summary, open_date"
 OUTPUT_MODE="TABLE"
 
-if [ "$1" == "--help" ]; then
+if (( $# == 0 )) || [ "$1" == "--help" ]; then
     echo "Usage: sdm-tickets.sh [OPTIONS]"
     echo -e "Options:"
     echo -e "    -a, --attr-list <LIST>\t\tComma separated attribute names (only works with -x option)"
